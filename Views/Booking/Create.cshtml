@@ -1,0 +1,201 @@
+﻿@model EventEase.Models.Booking
+
+@{
+    ViewData["Title"] = "Create New Booking";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background-color: #f8f9fa;
+                color: #333;
+            }
+
+            .page-header {
+                background: linear-gradient(135deg, #007FFF 0%, #0056b3 100%);
+                color: white;
+                padding: 2rem;
+                border-radius: 15px;
+                margin-bottom: 2rem;
+            }
+
+                .page-header h1 {
+                    font-size: 2rem;
+                    font-weight: bold;
+                    margin: 0;
+                }
+
+                .page-header p {
+                    margin: 0;
+                    opacity: 0.9;
+                }
+
+            .form-container {
+                background: white;
+                border-radius: 15px;
+                padding: 2rem;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            }
+
+            .form-group {
+                margin-bottom: 1.5rem;
+            }
+
+                .form-group label {
+                    font-weight: 600;
+                    color: #333;
+                    margin-bottom: 0.5rem;
+                }
+
+                    .form-group label .required {
+                        color: #dc3545;
+                        margin-left: 3px;
+                    }
+
+            .form-control, .form-select {
+                border-radius: 10px;
+                border: 1px solid #ddd;
+                padding: 0.75rem;
+                transition: all 0.3s ease;
+            }
+
+                .form-control:focus, .form-select:focus {
+                    border-color: #007FFF;
+                    box-shadow: 0 0 0 0.2rem rgba(0, 127, 255, 0.25);
+                }
+
+            .btn-submit {
+                background: linear-gradient(135deg, #007FFF 0%, #0056b3 100%);
+                color: white;
+                padding: 0.75rem 2rem;
+                border-radius: 10px;
+                border: none;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            }
+
+                .btn-submit:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 5px 15px rgba(0, 127, 255, 0.3);
+                }
+
+            .btn-back {
+                background: #6c757d;
+                color: white;
+                padding: 0.75rem 2rem;
+                border-radius: 10px;
+                text-decoration: none;
+                display: inline-block;
+                transition: all 0.3s ease;
+            }
+
+                .btn-back:hover {
+                    background: #5a6268;
+                    transform: translateY(-2px);
+                    color: white;
+                }
+
+            .text-danger {
+                font-size: 0.875rem;
+                margin-top: 0.25rem;
+            }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>
+                <i class="bi bi-ticket-perforated"></i> @ViewData["Title"]
+            </h1>
+            <p>Create a new booking for a customer</p>
+        </div>
+
+        <!-- Form Container -->
+        <div class="form-container">
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <!-- Event Dropdown -->
+                        <div class="form-group">
+                            <label asp-for="EventID" class="control-label">
+                                Event <span class="required">*</span>
+                            </label>
+                            <select asp-for="EventID" class="form-select" id="EventSelect">
+                                <option value="">-- Select Event --</option>
+                                @if (ViewBag.Events != null)
+                                {
+                                    foreach (var eventItem in ViewBag.Events)
+                                    {
+                                        <option value="@eventItem.EventID" data-venue-id="@eventItem.VenueID">
+                                            @eventItem.EventName - @eventItem.EventDate.ToString("yyyy-MM-dd")
+                                        </option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="EventID" class="text-danger"></span>
+                            <small class="text-muted">Select the event you want to book</small>
+                        </div>
+
+                        <!-- Venue Dropdown -->
+                        <div class="form-group">
+                            <label asp-for="VenueID" class="control-label">
+                                Venue <span class="required">*</span>
+                            </label>
+                            <select asp-for="VenueID" class="form-select">
+                                <option value="">-- Select Venue --</option>
+                                @if (ViewBag.Venues != null)
+                                {
+                                    foreach (var venue in ViewBag.Venues)
+                                    {
+                                        <option value="@venue.VenueID">@venue.VenueName (Capacity: @venue.Capacity)</option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="VenueID" class="text-danger"></span>
+                            <small class="text-muted">Choose the venue for this booking</small>
+                        </div>
+
+                        <!-- Booking Date -->
+                        <div class="form-group">
+                            <label asp-for="BookingDate" class="control-label">
+                                Booking Date <span class="required">*</span>
+                            </label>
+                            <input asp-for="BookingDate" class="form-control" type="datetime-local" />
+                            <span asp-validation-for="BookingDate" class="text-danger"></span>
+                            <small class="text-muted">When is this booking being made?</small>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="form-group text-center mt-4">
+                            <button type="submit" class="btn-submit">
+                                <i class="bi bi-check-lg"></i> Create Booking
+                            </button>
+                            <a asp-action="Index" class="btn-back ms-2">
+                                <i class="bi bi-arrow-left"></i> Back to List
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
+</body>
+</html>

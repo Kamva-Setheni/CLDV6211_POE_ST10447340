@@ -1,0 +1,278 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventEase Management Company - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background-color: #f8f9fa;
+                color: #333;
+            }
+
+            .dashboard-header {
+                background: linear-gradient(135deg, #007FFF 0%, #0056b3 100%);
+                color: white;
+                padding: 2rem;
+                border-radius: 15px;
+                margin-bottom: 2rem;
+            }
+
+                .dashboard-header h1 {
+                    font-size: 2.5rem;
+                    font-weight: bold;
+                    margin: 0;
+                }
+
+                .dashboard-header p {
+                    margin: 0;
+                    opacity: 0.9;
+                }
+
+            .stat-card {
+                transition: transform 0.3s ease;
+                cursor: pointer;
+                border-radius: 15px;
+                overflow: hidden;
+            }
+
+                .stat-card:hover {
+                    transform: translateY(-5px);
+                }
+
+                .stat-card .card-body {
+                    padding: 1.5rem;
+                }
+
+            .stat-icon {
+                font-size: 2.5rem;
+                float: right;
+                opacity: 0.3;
+            }
+
+            .quick-action-btn {
+                padding: 0.75rem 1.5rem;
+                margin: 0.5rem;
+                border-radius: 10px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+            }
+
+                .quick-action-btn:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                }
+
+            .event-card {
+                transition: transform 0.3s ease;
+                border-radius: 15px;
+                overflow: hidden;
+            }
+
+                .event-card:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+                }
+
+            .event-date-badge {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background: #007FFF;
+                color: white;
+                padding: 5px 10px;
+                border-radius: 20px;
+                font-size: 0.8rem;
+            }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <h1>
+                <i class="bi bi-calendar-event"></i> EventEase Dashboard
+            </h1>
+            <p>Welcome to the Venue Booking Management System</p>
+        </div>
+
+        <!-- Error Message -->
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <strong>Error!</strong> @ViewBag.Error
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <!-- Quick Actions -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-lightning-charge"></i> Quick Actions
+                        </h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <a asp-controller="Venue" asp-action="Create" class="btn btn-primary quick-action-btn">
+                            <i class="bi bi-building"></i> Add Venue
+                        </a>
+                        <a asp-controller="Event" asp-action="Create" class="btn btn-success quick-action-btn">
+                            <i class="bi bi-calendar-plus"></i> Create Event
+                        </a>
+                        <a asp-controller="Booking" asp-action="Create" class="btn btn-info quick-action-btn text-white">
+                            <i class="bi bi-ticket-perforated"></i> New Booking
+                        </a>
+                        <a asp-controller="Venue" asp-action="Index" class="btn btn-outline-secondary quick-action-btn">
+                            <i class="bi bi-list"></i> View All Venues
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card stat-card text-white bg-primary">
+                    <div class="card-body">
+                        <i class="bi bi-building stat-icon"></i>
+                        <h5 class="card-title">Total Venues</h5>
+                        <h2 class="card-text">@ViewBag.VenueCount</h2>
+                        <small>Available venues in the system</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card text-white bg-success">
+                    <div class="card-body">
+                        <i class="bi bi-calendar-event stat-icon"></i>
+                        <h5 class="card-title">Total Events</h5>
+                        <h2 class="card-text">@ViewBag.EventCount</h2>
+                        <small>Scheduled events</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card text-white bg-info">
+                    <div class="card-body">
+                        <i class="bi bi-ticket-detailed stat-icon"></i>
+                        <h5 class="card-title">Total Bookings</h5>
+                        <h2 class="card-text">@ViewBag.BookingCount</h2>
+                        <small>Confirmed bookings</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Featured Events -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-star-fill text-warning"></i> Upcoming Events
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        @if (ViewBag.FeaturedEvents != null && ViewBag.FeaturedEvents.Count > 0)
+                        {
+                            <div class="row">
+                                @foreach (var ev in ViewBag.FeaturedEvents)
+                                {
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card event-card h-100 position-relative">
+                                            <div class="event-date-badge">
+                                                <i class="bi bi-calendar"></i> @ev.EventDate.ToString("MMM dd")
+                                            </div>
+                                            <div class="card-body">
+                                                <h5 class="card-title">@ev.EventName</h5>
+                                                <p class="card-text text-muted small">
+                                                    <i class="bi bi-geo-alt"></i> @(ev.Venue?.VenueName ?? "No venue assigned")
+                                                </p>
+                                                <p class="card-text">
+                                                    <strong>
+                                                        <i class="bi bi-clock"></i> Date:
+                                                    </strong> @ev.EventDate.ToString("MMMM dd, yyyy")
+                                                </p>
+                                                <p class="card-text">
+                                                    <strong>Description:</strong><br />
+                                                    @(ev.Description?.Length > 100 ? ev.Description.Substring(0, 100) + "..." : ev.Description ?? "No description")
+                                                </p>
+                                            </div>
+                                            <div class="card-footer bg-white">
+                                                <a asp-controller="Event" asp-action="Details" asp-route-id="@ev.EventID" class="btn btn-outline-primary btn-sm w-100">
+                                                    <i class="bi bi-eye"></i> View Details
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center py-5">
+                                <i class="bi bi-calendar-x" style="font-size: 3rem; color: #ccc;"></i>
+                                <p class="text-muted mt-3">No upcoming events found.</p>
+                                <a asp-controller="Event" asp-action="Create" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-plus-circle"></i> Create First Event
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity Section -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-activity"></i> System Overview
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-4">
+                                <div class="border rounded p-3">
+                                    <i class="bi bi-building fs-1 text-primary"></i>
+                                    <h6 class="mt-2">Venues Management</h6>
+                                    <small class="text-muted">Manage venue details, capacity, and images</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="border rounded p-3">
+                                    <i class="bi bi-calendar fs-1 text-success"></i>
+                                    <h6 class="mt-2">Events Planning</h6>
+                                    <small class="text-muted">Schedule and organize events</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="border rounded p-3">
+                                    <i class="bi bi-ticket fs-1 text-info"></i>
+                                    <h6 class="mt-2">Bookings</h6>
+                                    <small class="text-muted">Manage customer bookings</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- This closes the container div -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
